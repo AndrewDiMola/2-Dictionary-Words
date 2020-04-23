@@ -12,10 +12,11 @@
   body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
   .w3-bar,h1,button {font-family: "Montserrat", sans-serif}
   </style>
+  <script src="2dictionarywords.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/easytimer@1.1.1/dist/easytimer.min.js"></script>
 </head>
- 
+
 <body>
   <!-- Navbar -->
   <div class="w3-top">
@@ -25,84 +26,47 @@
   </div>
   <!-- First Grid -->
   <div class="w3-row-padding w3-container w3-margin-top">
-    <div class="w3-row-padding w3-padding-32">
-      <h3><strong>Instructions:</strong> Click through synonyms as fast as you can to find a path from your Current Word to your Goal Word!</h3>
-    <div>
-    <div>
+    <div class="w3-row-padding w3-padding-32 w3-margin-top">
+      <h3><strong>Instructions:</strong> Click through synonyms as fast as you can to find a path from your Your Word to your Goal Word!</h3>
       <h5><strong>Note:</strong> Please refresh the page if there are any empty definitions or synonyms. (Synonym functionality not yet implemented.)</h5>
-    <div>
-    <div class="w3-row-padding">
-      <div class="w3-row-padding w3-padding-16 w3-topbar w3-bottombar">
-        <h1><strong>Goal Word: </strong><em><span id="goalWord"><!-- Goal Word --></span></em></h1>
-        <h5 class="w3-padding-16"><strong>Definition:</strong> <em><span id="goalDefinition"><!-- Definition --></span></em></h5>
-      </div>
-      <div class="w3-row-padding w3-padding-16 w3-bottombar">
-        <h1><strong>Current Word: </strong><em><span id="currentWord"><!-- Current Word --></span></em></h1>
-        <h5 class="w3-padding-16"><strong>Definition:</strong> <em><span id="currentDefinition"><!-- Definition --></span></em></h5>
-        <h5 class="w3-padding-16"><strong>Synonyms:</strong> <em><span id="currentSynonyms"><!-- Synonyms --></span></em></h5>
-      </div>
+      <div>
+        <div class="w3-row-padding">
+          <div class="w3-row-padding w3-padding-16 w3-topbar w3-bottombar">
+            <h1><strong>Goal Word: </strong><em><span id="goalWord"><!-- Goal Word --></span></em></h1>
+            <h5 class="w3-padding-16"><strong>Definition:</strong> <em><span id="goalDefinition"><!-- Definition --></span></em></h5>
+          </div>
+          <div class="w3-row-padding w3-padding-16 w3-bottombar">
+            <h1><strong>Your Word: </strong><em><span id="activeWord"><!-- Active Word --></span></em></h1>
+            <h5 class="w3-padding-16"><strong>Definition:</strong> <em><span id="activeDefinition"><!-- Definition --></span></em></h5>
+            <h5 class="w3-padding-16"><strong>Synonyms:</strong> <em><span id="activeSynonyms"><!-- Synonyms --></span></em></h5>
+          </div>
+        </div>
+        <!-- Timer -->
+        <div class="w3-container w3-center w3-margin-top">
+          <div class="w3-xlarge">
+            <div id="basicUsage">00:00:00</div>
+          </div>
+        </div>
+      </div> 
     </div>
-    <!-- Timer -->
-    <div class="w3-container w3-center w3-margin-top">
-      <div class="w3-xlarge">
-        <div id="basicUsage">00:00:00</div>
-      </div>
-    </div>
-  </div> 
-  <!-- Start Timer -->
+  </div>
+  <!-- Game Logic -->
   <script>
-    var timer = new Timer();
-    timer.start();
-    timer.addEventListener('secondsUpdated', function (e) {
-        $('#basicUsage').html(timer.getTimeValues().toString());
+  // Global object for game data
+  var gameWordSet;
+
+  $.when( initializeGame() ).done(function(a1, a2, a3, a4){
+
+    // Initialize gameWord objects
+    $.when( requestGoalWordData(gameWordSet.goalWordObject),
+    requestActiveWordData(gameWordSet.activeWordObject) ).done(function(a1, a2, a3, a4){
+      // Start the game
+      writeGoalWordObject(gameWordSet.goalWordObject);
+      writeActiveWordObject(gameWordSet.activeWordObject);
+      startTimer();
     });
-  </script>
-  <!-- Fetch Words -->
-  <script>
-    $.get('popular.txt', function(txt) {
-      // Calculate two random line numbers for the popular words .txt file
-      var lines = txt.split("\n");
-      var randGoalWordLine = Math.floor(Math.random() * lines.length);
-      var randStartWordLine = Math.floor(Math.random() * lines.length);
-
-      // Retrieve goal and start words and write to HTML
-      $('#goalWord').html((lines[randGoalWordLine]));
-      $('#currentWord').html((lines[randStartWordLine]));
-
-      // Set up Unofficial Google API requests
-      var googleDictionaryAPI="https://api.dictionaryapi.dev/api/v1/entries/en/"
-      var randGoalWordDefRequest = googleDictionaryAPI + lines[randGoalWordLine];
-      var randStartWordDefRequest = googleDictionaryAPI + lines[randStartWordLine];
-
-      // Request Goal Word definition
-      $.get(randGoalWordDefRequest, function(data){
-
-        // Parse JSON for *any* working definition
-        var defKey = data[0].meaning;
-        var defKeyAny = Object.keys(defKey)[0];
-        var randGoalWordDef = defKey[defKeyAny][0].definition;
-
-        // Write Goal Word definition to HTML
-        $('#goalDefinition').html(randGoalWordDef);
-      });
-
-      // Request Start Word definition
-      $.get(randStartWordDefRequest, function(data){
-
-        // Parse JSON for *any* working definition
-        var defKey = data[0].meaning;
-        var defKeyAny = Object.keys(defKey)[0];
-        var randStartWordDef = defKey[defKeyAny][0].definition;
-        var randStartWordSyn = defKey[defKeyAny][0].synonyms;
-
-        // Add delimiter to synonym array
-        var prettyRandStartWordSyn = randStartWordSyn.join(', ');
-
-        // Write Start Word definition and synonyms to HTML
-        $('#currentDefinition').html(randStartWordDef);
-        $('#currentSynonyms').html(prettyRandStartWordSyn);
-      });
   });
+
   </script>
   <!-- Footer -->
   <footer class="w3-container w3-red w3-center">
@@ -111,6 +75,5 @@
       <i class="fa fa-twitter w3-hover-opacity"></i>
     </div>
   </footer>
- 
 </body>
 </html>
