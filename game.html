@@ -11,10 +11,12 @@
   <style>
   body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
   .w3-bar,h1,button {font-family: "Montserrat", sans-serif}
+  #pastWords { display: none; }
+  #gameWon { display: none; }
   </style>
-  <script src="2dictionarywords.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/easytimer@1.1.1/dist/easytimer.min.js"></script>
+  <script src="2dictionarywords.js"></script>
 </head>
 
 <body>
@@ -28,12 +30,13 @@
   <div class="w3-row-padding w3-container w3-margin-top">
     <div class="w3-row-padding w3-padding-32 w3-margin-top">
       <h3><strong>Instructions:</strong> Click through synonyms as fast as you can to find a path from your Your Word to your Goal Word!</h3>
-      <h5><strong>Note:</strong> Please refresh the page if there are any empty definitions or synonyms. (Synonym functionality not yet implemented.)</h5>
+      <h5><strong>Note:</strong> Please refresh the page if your word does not appear.</h5>
       <div>
         <div class="w3-row-padding">
           <div class="w3-row-padding w3-padding-16 w3-topbar w3-bottombar">
             <h1><strong>Goal Word: </strong><em><span id="goalWord"><!-- Goal Word --></span></em></h1>
             <h5 class="w3-padding-16"><strong>Definition:</strong> <em><span id="goalDefinition"><!-- Definition --></span></em></h5>
+            <h5 class="w3-padding-16"><strong><span id="gameWon" Congratulations! You did it!</span></strong></h5>
           </div>
           <div class="w3-row-padding w3-padding-16 w3-bottombar">
             <h1><strong>Your Word: </strong><em><span id="activeWord"><!-- Active Word --></span></em></h1>
@@ -45,6 +48,7 @@
         <div class="w3-container w3-center w3-margin-top">
           <div class="w3-xlarge">
             <div id="basicUsage">00:00:00</div>
+            <div id="pastWords"><strong>Previous Words: </strong><!-- Word Path --></div>
           </div>
         </div>
       </div> 
@@ -52,8 +56,9 @@
   </div>
   <!-- Game Logic -->
   <script>
-  // Global object for game data
+  // Global objects for game data
   var gameWordSet;
+  var gameTimer;
 
   $.when( initializeGame() ).done(function(a1, a2, a3, a4){
 
@@ -61,9 +66,9 @@
     $.when( requestGoalWordData(gameWordSet.goalWordObject),
     requestActiveWordData(gameWordSet.activeWordObject) ).done(function(a1, a2, a3, a4){
       // Start the game
+      window.gameTimer = startTimer();
       writeGoalWordObject(gameWordSet.goalWordObject);
       writeActiveWordObject(gameWordSet.activeWordObject);
-      startTimer();
     });
   });
 
