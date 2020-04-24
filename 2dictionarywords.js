@@ -94,7 +94,11 @@ function writeActiveWordObject(gameWordObject){
   $('#activeWord').html(gameWordObject.word);
 
   // Write active definition to HTML
-  $('#activeDefinition').html(gameWordObject.definition);
+  if (gameWordObject.definition !== undefined){
+    $('#activeDefinition').html(gameWordObject.definition);
+  } else {
+    $('#activeDefinition').html(gameWordObject.word + " has no available definition.");
+  }
 
   // Write active synonyms to HTML
   if (gameWordObject.synonyms !== undefined){
@@ -105,7 +109,8 @@ function writeActiveWordObject(gameWordObject){
       $("#activeSynonyms").append(synButton);
     }
   } else {
-    endGame(gameWordObject);
+    gameWordObject.word = gameWordObject.word.charAt(0).toUpperCase() + gameWordObject.word.slice(1);
+    $('#activeSynonyms').html(gameWordObject.word + " has no synonyms.");
   }
 }
 
@@ -119,7 +124,7 @@ function genNewWordObject(objButton, activeWordObject){
 
   // Start / Append breadcrumbs of previous words
   $("#pastWords").show();
-  $("#pastWords").append(activeWordObject.word + ", ");
+  $("#pastWords").append("<input type='button' id='buttons' onclick='genNewWordObject(this, gameWordSet.activeWordObject)' value='" + activeWordObject.word + "'/> → ");
 
   // Clear old synonyms
   $('#activeSynonyms').html("");
@@ -129,11 +134,4 @@ function genNewWordObject(objButton, activeWordObject){
   $.when( requestActiveWordData(activeWordObject) ).done(function(a1, a2, a3, a4){
     writeActiveWordObject(activeWordObject);
   });
-}
-
-function endGame(gameWordObject){
-  // Uppercase first letter of word, return Game Over message, and stop the timer
-  gameWordObject.word = gameWordObject.word.charAt(0).toUpperCase() + gameWordObject.word.slice(1);
-  $('#activeSynonyms').html("Game Over. " + gameWordObject.word + " has no synonyms. Refresh the page to play again.");
-  window.gameTimer.stop();
 }
