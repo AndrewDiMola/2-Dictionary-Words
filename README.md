@@ -1,5 +1,5 @@
 # 2 Dictionary Words
-Using synonyms, find a path from your given word to a new word as fast as you can!
+Find a path from your given word to a new word as fast as you can!
 
 ![simpledemo](https://raw.githubusercontent.com/AndrewDiMola/2dictionarywords/master/2dictionarywords.gif)
 
