@@ -8,4 +8,5 @@ Find a path from your given word to a new word as fast as you can!
 * https://github.com/albert-gonzalez/easytimer.js
 * https://github.com/dolph/dictionary
 * https://github.com/meetDeveloper/googleDictionaryAPI
+* https://data-miner.io/
 * https://www.lexico.com/
