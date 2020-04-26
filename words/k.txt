@@ -1,4 +1,3 @@
-Column 1
 k
 K
 K2
