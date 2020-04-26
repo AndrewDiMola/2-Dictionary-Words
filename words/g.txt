@@ -1,4 +1,3 @@
-Column 1
 g
 G
 G20
