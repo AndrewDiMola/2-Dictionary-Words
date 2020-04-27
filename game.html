@@ -35,14 +35,14 @@
       <div>
         <div class="w3-row-padding">
           <div class="w3-row-padding w3-padding-16 w3-topbar w3-bottombar">
-            <h1><strong>Goal Word: </strong><em><span id="goalWord"><!-- Goal Word --></span></em></h1>
-            <h5 class="w3-padding-16"><strong>Definition:</strong> <em><span id="goalDefinition"><!-- Definition --></span></em></h5>
+            <h1><strong>Goal Word: </strong><em><span id="goalWord">Loading...<!-- Goal Word --></span></em></h1>
+            <h5 class="w3-padding-16"><strong>Definition:</strong> <em><span id="goalDefinition">Please wait a few seconds for game initialization.<!-- Definition --></span></em></h5>
             <h5 class="w3-padding-16"><strong><span id="gameWon"><!-- Win Message --></span></strong></h5>
           </div>
           <div class="w3-row-padding w3-padding-16 w3-bottombar">
-            <h1><strong>Your Word: </strong><em><span id="activeWord"><!-- Active Word --></span></em></h1>
+            <h1><strong>Your Word: </strong><em><span id="activeWord">Loading...<!-- Active Word --></span></em></h1>
+            <h5 class="w3-padding-16"><strong>Definition:</strong> <em><span id="activeDefinition">Thank you for waiting.<!-- Definition --></span></em></h5>
             <h5 class="w3-padding-16"><strong>Similar Words:</strong> <em><span id="activeFuzzyMatches"><!-- Similar Words --></span></em></h5>
-            <h5 class="w3-padding-16"><strong>Definition:</strong> <em><span id="activeDefinition"><!-- Definition --></span></em></h5>
             <h5 class="w3-padding-16"><strong>Synonyms:</strong> <em><span id="activeSynonyms"><!-- Synonyms --></span></em></h5>
           </div>
         </div>
@@ -77,6 +77,7 @@
 
       // Write word objects
       writeGoalWordObject(gameWordSet.goalWordObject);
+
       writeActiveWordObject(gameWordSet.activeWordObject, gameWordSet.wordList);
     });
   });
