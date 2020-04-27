@@ -30,13 +30,13 @@
   <div class="w3-row-padding w3-container w3-margin-top">
     <div class="w3-row-padding w3-padding-32 w3-margin-top">
       <h3><strong>Instructions:</strong> Click through embedded words as fast as you can to find a path from your Your Word to your Goal Word!</h3>
-      <h5><strong>Note:</strong> Please refresh the page if your word does not appear.</h5>
+      <h5><strong>Note:</strong> <span id="noteMsg">Please refresh the page if your word does not appear.</span></h5>
       <div>
         <div class="w3-row-padding">
           <div class="w3-row-padding w3-padding-16 w3-topbar w3-bottombar">
             <h1><strong>Goal Word: </strong><em><span id="goalWord"><!-- Goal Word --></span></em></h1>
             <h5 class="w3-padding-16"><strong>Definition:</strong> <em><span id="goalDefinition"><!-- Definition --></span></em></h5>
-            <h5 class="w3-padding-16"><strong><span id="gameWon" Congratulations! You did it!</span></strong></h5>
+            <h5 class="w3-padding-16"><strong><span id="gameWon"><!-- Win Message --></span></strong></h5>
           </div>
           <div class="w3-row-padding w3-padding-16 w3-bottombar">
             <h1><strong>Your Word: </strong><em><span id="activeWord"><!-- Active Word --></span></em></h1>
@@ -69,7 +69,7 @@
       // Start the game
       window.gameTimer = startTimer();
       writeGoalWordObject(gameWordSet.goalWordObject);
-      writeActiveWordObject(gameWordSet.activeWordObject, gameWordSet.wordLists);
+      writeActiveWordObject(gameWordSet.activeWordObject, gameWordSet.wordList);
     });
   });
 
