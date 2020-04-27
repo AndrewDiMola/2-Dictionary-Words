@@ -124,8 +124,11 @@ function writeActiveWordObject(gameWordObject, wordList){
   // Write active synonyms to HTML and convert them to buttons
   if (gameWordObject.synonyms !== undefined){
     var synButton;
+    var hasEligibleSyn = false;
+
     for (var i = 0; i < gameWordObject.synonyms.length; i++) {
       if (isWordEligible(gameWordObject.synonyms[i], wordList)){
+        hasEligibleSyn = true;
         synButton = $('<div></div>');
         synButton.html("<input type='button' class='buttons' onclick='genNewWordObject(this, window.gameWordSet.activeWordObject)' value='" + gameWordObject.synonyms[i] + "'/>");
         $("#activeSynonyms").append(synButton);
@@ -133,7 +136,7 @@ function writeActiveWordObject(gameWordObject, wordList){
     }
 
     // If all synonyms are ineligible, write a message about the ineligibility
-    if (!$('activeSynonyms').hasChildNodes()) {
+    if (!hasEligibleSyn) {
       $('#activeSynonyms').html(gameWordObject.word + " has no available synonyms.");
     }
   } else {
