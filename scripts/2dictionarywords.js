@@ -1,6 +1,6 @@
 function initializeGame(){
 
-  return $.get('popular.txt', function(txt) {
+  return $.get('words/popularInAll.txt', function(txt) {
 
     // Calculate two random line numbers
     var lines = txt.split("\n");
@@ -26,48 +26,21 @@ function initializeGame(){
     };
 
     // initialize word lists object
-    var initWordLists = {
-      aWords: undefined,
-      bWords: undefined,
-      cWords: undefined,
-      dWords: undefined,
-      eWords: undefined,
-      fWords: undefined,
-      gWords: undefined,
-      hWords: undefined,
-      iWords: undefined,
-      jWords: undefined,
-      kWords: undefined,
-      lWords: undefined,
-      mWords: undefined,
-      nWords: undefined,
-      oWords: undefined,
-      pWords: undefined,
-      qWords: undefined,
-      rWords: undefined,
-      sWords: undefined,
-      tWords: undefined,
-      uWords: undefined,
-      vWords: undefined,
-      wWords: undefined,
-      xWords: undefined,
-      yWords: undefined,
-      zWords: undefined
-    };
+    var initWordList = { undefined };
 
     // create game word set object
     var initialGameWordSet = {
       goalWordObject: initGoalWordObject,
       activeWordObject: initActiveWordObject,
-      wordLists: initWordLists
+      wordList: initWordList
     }
 
     window.gameWordSet = initialGameWordSet;
 
-    $.get('a.txt', function(txt) {
+    $.get('words/all.txt', function(txt) {
 
       var lines = txt.split("\n");
-      window.gameWordSet.wordLists.aWords = lines;
+      window.gameWordSet.wordList = lines;
     });
   });
 }
@@ -126,14 +99,14 @@ function writeGoalWordObject(gameWordObject){
   $('#goalDefinition').html(gameWordObject.definition);
 }
 
-function writeActiveWordObject(gameWordObject, wordLists){
+function writeActiveWordObject(gameWordObject, wordList){
   // Write active word to HTML
   $('#activeWord').html(gameWordObject.word);
 
   // Write active definition to HTML
   if (gameWordObject.definition !== undefined){
     // Convert eligible definition words to buttons
-    genDefinitionWordButtons(gameWordObject, wordLists);
+    genDefinitionWordButtons(gameWordObject, wordList);
   } else {
     $('#activeDefinition').html(gameWordObject.word + " has no available definition.");
   }
@@ -152,7 +125,7 @@ function writeActiveWordObject(gameWordObject, wordLists){
   }
 }
 
-function genDefinitionWordButtons(activeWordObject, wordLists){
+function genDefinitionWordButtons(activeWordObject, wordList){
 
   // Split definition String into Array
   var definition = activeWordObject.definition;
@@ -163,67 +136,8 @@ function genDefinitionWordButtons(activeWordObject, wordLists){
     var firstLetter = definitionArray[i].charAt(0).toLowerCase();
     var isEligible = false;
 
-    // initial framework for word eligibility checks
-    switch(firstLetter) {
-      case "a":
-        if (wordLists !== undefined){
-          isEligible = isWordEligible(definitionArray[i], wordLists.aWords);
-        }
-        break;
-      case "b":
-        break;
-      case "c":
-        break;
-      case "d":
-        break;
-      case "e":
-        break;
-      case "f":
-        break;
-      case "g":
-        break;
-      case "h":
-        break;
-      case "i":
-        break;
-      case "j":
-        break;
-      case "k":
-        break;
-      case "l":
-        break;
-      case "m":
-        break;
-      case "n":
-        break;
-      case "o":
-        break;
-      case "p":
-        break;
-      case "q":
-        break;
-      case "r":
-        break;
-      case "s":
-        break;
-      case "t":
-        break;
-      case "u":
-        break;
-      case "v":
-        break;
-      case "w":
-        break;
-      case "x":
-        break;
-      case "y":
-        break;
-      case "z":
-        break;
-      default:
-        // Likely a number or punctuation: do nothing.
-        break;
-    }
+    // word eligibility check
+    isEligible = isWordEligible(definitionArray[i], wordList);
 
     if (isEligible){
       $("#activeDefinition").append("<input type='button' id='buttons' onclick='genNewWordObject(this, window.gameWordSet.activeWordObject)' value='" + definitionArray[i] + "'/> ");
@@ -260,6 +174,6 @@ function genNewWordObject(objButton, activeWordObject){
   // Replace active word with new word (button value)
   activeWordObject.word = objButton.value;
   $.when( requestActiveWordData(activeWordObject) ).done(function(a1, a2, a3, a4){
-    writeActiveWordObject(activeWordObject, window.gameWordSet.wordLists);
+    writeActiveWordObject(activeWordObject, window.gameWordSet.wordList);
   });
 }
