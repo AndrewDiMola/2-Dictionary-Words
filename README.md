@@ -12,8 +12,7 @@ Find a path from your given dictionary word to a new dictionary word as fast as 
 ![goalpath](https://raw.githubusercontent.com/AndrewDiMola/2-Dictionary-Words/master/demos/goalpath.png)
 
 # Play on mobile!
-![mobilegoalword](https://raw.githubusercontent.com/AndrewDiMola/2-Dictionary-Words/master/demos/mobilegoalword.jpeg)
-![mobilegoalpath](https://raw.githubusercontent.com/AndrewDiMola/2-Dictionary-Words/master/demos/mobilegoalpath.jpeg)
+<img src="https://raw.githubusercontent.com/AndrewDiMola/2-Dictionary-Words/master/demos/mobilegoalword.jpeg" alt="mobilegoalword" width="400" height="850"> <img src="https://raw.githubusercontent.com/AndrewDiMola/2-Dictionary-Words/master/demos/mobilegoalpath.jpeg" alt="mobilegoalpath" width="400" height="850">
 
 # Attribution
 * https://www.w3schools.com/w3css/w3css_templates.asp ([W3.CSS is Free](https://www.w3schools.com/w3css/))
