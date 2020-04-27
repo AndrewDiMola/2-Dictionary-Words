@@ -131,6 +131,11 @@ function writeActiveWordObject(gameWordObject, wordList){
         $("#activeSynonyms").append(synButton);
       }
     }
+
+    // If all synonyms are ineligible, write a message about the ineligibility
+    if ($('activeSynonyms').text().length == 0) {
+      $('#activeSynonyms').html(gameWordObject.word + " has no synonyms.");
+}
   } else {
     gameWordObject.word = gameWordObject.word.charAt(0).toUpperCase() + gameWordObject.word.slice(1);
     $('#activeSynonyms').html(gameWordObject.word + " has no synonyms.");
