@@ -106,14 +106,21 @@ function writeGoalWordObject(goalWordObject){
   // Write goal word to HTML
   $('#goalWord').html(goalWordObject.word);
 
-  // Write goal definition to HTML
-  $('#goalDefinition').html(goalWordObject.definition);
+  // Write active definition to HTML
+  if (goalWordObject.definition !== undefined){
+    $('#goalDefinition').html(goalWordObject.definition);
+  } else {
+    $('#goalDefinition').html(goalWordObject.word + " has no available definition.");
+  }
 }
 
 function writeActiveWordObject(activeWordObject, wordList){
 
   // Write active word to HTML
   $('#activeWord').html(activeWordObject.word);
+
+  // Clear loading message
+  $('#activeDefinition').html("");
 
   // Add related words based on fuzzy matches
   var fuzzyMatches = genFuzzyMatches(activeWordObject);
@@ -154,7 +161,7 @@ function writeActiveWordObject(activeWordObject, wordList){
 function genFuzzyMatches(activeWordObject){
 
   // Get fuzzy matches and drop first array item (the perfect-matched input word)
-  var fuzzyMatches = window.fuzzySet.get(activeWordObject.word, ".33", "0.80");
+  var fuzzyMatches = window.fuzzySet.get(activeWordObject.word, ".33", "0.70");
   fuzzyMatches.shift();
 
   return fuzzyMatches;
@@ -184,23 +191,27 @@ function genFuzzyMatchButtons(activeWordObject, fuzzyMatches, wordList){
 function genDefinitionWordButtons(activeWordObject, wordList){
 
   // Split definition String into Array
-  var definition = activeWordObject.definition;
-  var definitionArray = definition.split(" ");
+  var definitionString = activeWordObject.definition;
+  var definitionStringNoPeriods = definitionString.split('.').join("");
+  var definitionArray = definitionStringNoPeriods.split(" ");
 
   for (i = 0; i < definitionArray.length; i++) {
 
-    var firstLetter = definitionArray[i].charAt(0).toLowerCase();
+    var definitionWord = definitionArray[i];
     var isEligible = false;
 
     // word eligibility check
-    isEligible = isWordEligible(definitionArray[i], wordList);
+    isEligible = isWordEligible(definitionWord.toLowerCase(), wordList);
 
     if (isEligible){
-      $("#activeDefinition").append("<input type='button' class='buttons' onclick='genNewWordObject(this, window.gameWordSet.activeWordObject)' value='" + definitionArray[i] + "'/>");
+      $("#activeDefinition").append("<input type='button' class='buttons' onclick='genNewWordObject(this, window.gameWordSet.activeWordObject)' value='" + definitionWord + "'/>");
     } else {
-      $('#activeDefinition').append(definitionArray[i] + " ");
+      $('#activeDefinition').append(definitionWord + " ");
     }
   }
+
+  // Return period to end of sentence
+  $('#activeDefinition').append(".");
 }
 
 function genNewWordObject(objButton, activeWordObject){
