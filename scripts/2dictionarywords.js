@@ -180,25 +180,27 @@ function genNewWordObject(objButton, activeWordObject){
 
   // Replace active word with new word (button value)
   activeWordObject.word = objButton.value;
+
   $.when( requestActiveWordData(activeWordObject) ).done(function(a1, a2, a3, a4){
     writeActiveWordObject(activeWordObject, window.gameWordSet.wordList);
 
-    // Check win condition (non-button win)
-    if (window.gameWordSet.goalWordObject.word === activeWordObject.word){
-      gameWon();
-    }
-
-    // Check win condition (button win)
-    if (window.gameWordSet.goalWordObject.word === objButton.value){
-      gameWon();
+    // Check win condition
+    if (window.gameWordSet.goalWordObject.word.toLowerCase() === activeWordObject.word.toLowerCase()){
+      gameWon(window.gameWordSet.goalWordObject.word);
     }
   });
 }
 
-function gameWon(){
+function gameWon(goalWord){
 
+  // Write final breadcrumb trail to goal word
+  $("#pastWords").append(goalWord);
+
+  // Show win message
   $("#gameWon").show();
   $("#gameWon").html("Congratulations! You found the goal word in " + window.gameTimer.getTimeValues().toString() + " minutes/seconds!");
+
+  // Update message underneath instructions
   $("#noteMsg").html("Refresh the page to play again.");
 
   // Disable all buttons on the page
