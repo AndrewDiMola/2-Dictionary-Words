@@ -1,5 +1,5 @@
 # 2 Dictionary Words
-Find a path from your given word to a new word as fast as you can!
+Find a path from your given dictionary word to a new dictionary word as fast as you can!
 
 # Play the game
 ![homepage](https://raw.githubusercontent.com/AndrewDiMola/2-Dictionary-Words/master/demos/homepage.png)
