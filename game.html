@@ -17,6 +17,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/easytimer@1.1.1/dist/easytimer.min.js"></script>
   <script src="scripts/2dictionarywords.js"></script>
+  <script src="scripts/fuzzyset.js"></script>
 </head>
 
 <body>
@@ -40,6 +41,7 @@
           </div>
           <div class="w3-row-padding w3-padding-16 w3-bottombar">
             <h1><strong>Your Word: </strong><em><span id="activeWord"><!-- Active Word --></span></em></h1>
+            <h5 class="w3-padding-16"><strong>Similar Words:</strong> <em><span id="activeFuzzyMatches"><!-- Similar Words --></span></em></h5>
             <h5 class="w3-padding-16"><strong>Definition:</strong> <em><span id="activeDefinition"><!-- Definition --></span></em></h5>
             <h5 class="w3-padding-16"><strong>Synonyms:</strong> <em><span id="activeSynonyms"><!-- Synonyms --></span></em></h5>
           </div>
@@ -63,11 +65,17 @@
 
   $.when( initializeGame() ).done(function(a1, a2, a3, a4){
 
-    // Initialize gameWord objects
+    // Initialize word objects
     $.when( requestGoalWordData(gameWordSet.goalWordObject),
     requestActiveWordData(gameWordSet.activeWordObject) ).done(function(a1, a2, a3, a4){
-      // Start the game
+
+      // Initialize Timer (albert-gonzalez/easytimer.js)
       window.gameTimer = startTimer();
+
+      // Initialize FuzzySet library (Glench/fuzzyset.js)
+      window.fuzzySet = FuzzySet(gameWordSet.wordList);
+
+      // Write word objects
       writeGoalWordObject(gameWordSet.goalWordObject);
       writeActiveWordObject(gameWordSet.activeWordObject, gameWordSet.wordList);
     });
