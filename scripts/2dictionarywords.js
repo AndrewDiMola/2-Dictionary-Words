@@ -56,7 +56,11 @@ function requestGoalWordData(gameWordObject){
     // Parse JSON for *any* working definition
     var defKey = data[0].meaning;
     var defKeyAny = Object.keys(defKey)[0];
-    var definition = defKey[defKeyAny][0].definition;
+
+    // Check if object containing definition exists
+    if (!$.isEmptyObject(defKey)){
+      var definition = defKey[defKeyAny][0].definition;
+    }
 
     window.gameWordSet.goalWordObject.definition = definition;
   });
@@ -73,8 +77,11 @@ function requestActiveWordData(gameWordObject){
     // Parse JSON for *any* working definition
     var defKey = data[0].meaning;
     var defKeyAny = Object.keys(defKey)[0];
-    var definition = defKey[defKeyAny][0].definition;
-    var synonyms = defKey[defKeyAny][0].synonyms;
+
+    if (!$.isEmptyObject(defKey)){
+      var definition = defKey[defKeyAny][0].definition;
+      var synonyms = defKey[defKeyAny][0].synonyms;
+    }
 
     window.gameWordSet.activeWordObject.definition = definition;
     window.gameWordSet.activeWordObject.synonyms = synonyms;
@@ -82,6 +89,7 @@ function requestActiveWordData(gameWordObject){
 }
 
 function startTimer(){
+
   var timer = new Timer();
   timer.start();
   timer.addEventListener('secondsUpdated', function (e) {
@@ -92,6 +100,7 @@ function startTimer(){
 }
 
 function writeGoalWordObject(gameWordObject){
+
   // Write goal word to HTML
   $('#goalWord').html(gameWordObject.word);
 
@@ -100,6 +109,7 @@ function writeGoalWordObject(gameWordObject){
 }
 
 function writeActiveWordObject(gameWordObject, wordList){
+
   // Write active word to HTML
   $('#activeWord').html(gameWordObject.word);
 
@@ -117,7 +127,7 @@ function writeActiveWordObject(gameWordObject, wordList){
     for (var i = 0; i < gameWordObject.synonyms.length; i++) {
       if (isWordEligible(gameWordObject.synonyms[i], wordList)){
         synButton = $('<div></div>');
-        synButton.html("<input type='button' id='buttons' onclick='genNewWordObject(this, window.gameWordSet.activeWordObject)' value='" + gameWordObject.synonyms[i] + "'/>");
+        synButton.html("<input type='button' class='buttons' onclick='genNewWordObject(this, window.gameWordSet.activeWordObject)' value='" + gameWordObject.synonyms[i] + "'/>");
         $("#activeSynonyms").append(synButton);
       }
     }
@@ -142,7 +152,7 @@ function genDefinitionWordButtons(activeWordObject, wordList){
     isEligible = isWordEligible(definitionArray[i], wordList);
 
     if (isEligible){
-      $("#activeDefinition").append("<input type='button' id='buttons' onclick='genNewWordObject(this, window.gameWordSet.activeWordObject)' value='" + definitionArray[i] + "'/> ");
+      $("#activeDefinition").append("<input type='button' class='buttons' onclick='genNewWordObject(this, window.gameWordSet.activeWordObject)' value='" + definitionArray[i] + "'/>");
     } else {
       $('#activeDefinition').append(definitionArray[i] + " ");
     }
@@ -150,6 +160,7 @@ function genDefinitionWordButtons(activeWordObject, wordList){
 }
 
 function isWordEligible(wordInDefinition, completeWordList){
+
   if (completeWordList.includes(wordInDefinition)){
     return true;
   } else {
@@ -159,23 +170,40 @@ function isWordEligible(wordInDefinition, completeWordList){
 
 function genNewWordObject(objButton, activeWordObject){
 
-  // Check win condition
-  if (window.gameWordSet.goalWordObject.word === activeWordObject.word){
-    $("#gameWon").show();
-    window.gameTimer.stop();
-  }
-
   // Clear old definition and synonyms
   $('#activeDefinition').html("");
   $('#activeSynonyms').html("");
 
   // Start / Append breadcrumbs of previous words
   $("#pastWords").show();
-  $("#pastWords").append(" <input type='button' id='buttons' onclick='genNewWordObject(this, window.gameWordSet.activeWordObject)' value='" + activeWordObject.word + "'/> → ");
+  $("#pastWords").append(" <input type='button' class='buttons' onclick='genNewWordObject(this, window.gameWordSet.activeWordObject)' value='" + activeWordObject.word + "'/> → ");
 
   // Replace active word with new word (button value)
   activeWordObject.word = objButton.value;
   $.when( requestActiveWordData(activeWordObject) ).done(function(a1, a2, a3, a4){
     writeActiveWordObject(activeWordObject, window.gameWordSet.wordList);
+
+    // Check win condition (non-button win)
+    if (window.gameWordSet.goalWordObject.word === activeWordObject.word){
+      gameWon();
+    }
+
+    // Check win condition (button win)
+    if (window.gameWordSet.goalWordObject.word === objButton.value){
+      gameWon();
+    }
   });
+}
+
+function gameWon(){
+
+  $("#gameWon").show();
+  $("#gameWon").html("Congratulations! You found the goal word in " + window.gameTimer.getTimeValues().toString() + " minutes/seconds!");
+  $("#noteMsg").html("Refresh the page to play again.");
+
+  // Disable all buttons on the page
+  $(':button').prop('disabled', true);
+
+  // Stop the game timer
+  window.gameTimer.stop();
 }
