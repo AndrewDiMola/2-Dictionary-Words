@@ -1,6 +1,8 @@
 # 2 Dictionary Words
 Find a path from your given word to a new word as fast as you can!
 
+![homepage](https://raw.githubusercontent.com/AndrewDiMola/2-Dictionary-Words/master/homepage.png)
+
 ![simpledemo](https://raw.githubusercontent.com/AndrewDiMola/2dictionarywords/master/2dictionarywords.gif)
 
 # Attribution
