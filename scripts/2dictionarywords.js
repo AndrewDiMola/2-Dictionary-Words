@@ -1,5 +1,6 @@
 function initializeGame(){
 
+  // modified .txt file of popular words (dolph/dictionary)
   return $.get('words/popularInAll.txt', function(txt) {
 
     // Calculate two random line numbers
@@ -45,15 +46,15 @@ function initializeGame(){
   });
 }
 
-function requestGoalWordData(gameWordObject){
+function requestGoalWordData(goalWordObject){
 
   // Set up Unofficial Google API requests for definitions and synonyms
   var googleDictionaryAPI="https://api.dictionaryapi.dev/api/v1/entries/en/";
-  var requestURL = googleDictionaryAPI + gameWordObject.word;
+  var requestURL = googleDictionaryAPI + goalWordObject.word;
 
   return $.get(requestURL, function(data){
 
-    // Parse JSON for *any* working definition
+    // Parse JSON for *any* part-of-speech result
     var defKey = data[0].meaning;
     var defKeyAny = Object.keys(defKey)[0];
 
@@ -66,18 +67,19 @@ function requestGoalWordData(gameWordObject){
   });
 }
 
-function requestActiveWordData(gameWordObject){
+function requestActiveWordData(activeWordObject){
 
-  // Set up Unofficial Google API requests for definitions and synonyms
+  // Set up Unofficial Google API requests (meetDeveloper/googleDictionaryAPI)
   var googleDictionaryAPI="https://api.dictionaryapi.dev/api/v1/entries/en/";
-  var requestURL = googleDictionaryAPI + gameWordObject.word;
+  var requestURL = googleDictionaryAPI + activeWordObject.word;
 
   return $.get(requestURL, function(data){
 
-    // Parse JSON for *any* working definition
+    // Parse JSON for *any* part of speech result
     var defKey = data[0].meaning;
     var defKeyAny = Object.keys(defKey)[0];
 
+    // Check if object containing definition and synonyms exists
     if (!$.isEmptyObject(defKey)){
       var definition = defKey[defKeyAny][0].definition;
       var synonyms = defKey[defKeyAny][0].synonyms;
@@ -99,49 +101,83 @@ function startTimer(){
   return timer;
 }
 
-function writeGoalWordObject(gameWordObject){
+function writeGoalWordObject(goalWordObject){
 
   // Write goal word to HTML
-  $('#goalWord').html(gameWordObject.word);
+  $('#goalWord').html(goalWordObject.word);
 
   // Write goal definition to HTML
-  $('#goalDefinition').html(gameWordObject.definition);
+  $('#goalDefinition').html(goalWordObject.definition);
 }
 
-function writeActiveWordObject(gameWordObject, wordList){
+function writeActiveWordObject(activeWordObject, wordList){
 
   // Write active word to HTML
-  $('#activeWord').html(gameWordObject.word);
+  $('#activeWord').html(activeWordObject.word);
+
+  // Add related words based on fuzzy matches
+  var fuzzyMatches = genFuzzyMatches(activeWordObject);
+  genFuzzyMatchButtons(activeWordObject, fuzzyMatches, wordList);
 
   // Write active definition to HTML
-  if (gameWordObject.definition !== undefined){
+  if (activeWordObject.definition !== undefined){
     // Convert eligible definition words to buttons
-    genDefinitionWordButtons(gameWordObject, wordList);
+    genDefinitionWordButtons(activeWordObject, wordList);
   } else {
-    $('#activeDefinition').html(gameWordObject.word + " has no available definition.");
+    $('#activeDefinition').html(activeWordObject.word + " has no available definition.");
   }
 
   // Write active synonyms to HTML and convert them to buttons
-  if (gameWordObject.synonyms !== undefined){
+  if (activeWordObject.synonyms !== undefined){
     var synButton;
     var hasEligibleSyn = false;
 
-    for (var i = 0; i < gameWordObject.synonyms.length; i++) {
-      if (isWordEligible(gameWordObject.synonyms[i], wordList)){
+    for (var i = 0; i < activeWordObject.synonyms.length; i++) {
+      if (isWordEligible(activeWordObject.synonyms[i], wordList)){
         hasEligibleSyn = true;
         synButton = $('<div></div>');
-        synButton.html("<input type='button' class='buttons' onclick='genNewWordObject(this, window.gameWordSet.activeWordObject)' value='" + gameWordObject.synonyms[i] + "'/>");
+        synButton.html("<input type='button' class='buttons' onclick='genNewWordObject(this, window.gameWordSet.activeWordObject)' value='" + activeWordObject.synonyms[i] + "'/>");
         $("#activeSynonyms").append(synButton);
       }
     }
 
-    // If all synonyms are ineligible, write a message about the ineligibility
+    // If all synonyms are ineligible for request, write a message about the ineligibility
     if (!hasEligibleSyn) {
-      $('#activeSynonyms').html(gameWordObject.word + " has no available synonyms.");
+      $('#activeSynonyms').html(activeWordObject.word + " has no available synonyms.");
     }
   } else {
-    gameWordObject.word = gameWordObject.word.charAt(0).toUpperCase() + gameWordObject.word.slice(1);
-    $('#activeSynonyms').html(gameWordObject.word + " has no available synonyms.");
+    $('#activeSynonyms').html(activeWordObject.word + " has no available synonyms.");
+  }
+}
+
+// Returns an array of arrays like: [[0.5715476066494082, 'Mississippi']]
+function genFuzzyMatches(activeWordObject){
+
+  // Get fuzzy matches and drop first array item (the perfect-matched input word)
+  var fuzzyMatches = window.fuzzySet.get(activeWordObject.word, ".33", "0.80");
+  fuzzyMatches.shift();
+
+  return fuzzyMatches;
+}
+
+// fuzzyMatches returns an array of arrays like: [[0.5715476066494082, 'Mississippi']]
+function genFuzzyMatchButtons(activeWordObject, fuzzyMatches, wordList){
+
+  var hasEligibleMatches = false;
+
+  for (var i = 0; i < fuzzyMatches.length; i++){
+
+    var fuzzyWord = fuzzyMatches[i][1];
+
+    if (isWordEligible(fuzzyWord, wordList)){
+      hasEligibleMatches = true;
+      $("#activeFuzzyMatches").append(" <input type='button' class='buttons' onclick='genNewWordObject(this, window.gameWordSet.activeWordObject)' value='" + fuzzyWord + "'/> " );
+    }
+  }
+
+  // If all fuzzy matches are ineligible for request, write a message about the ineligibility
+  if (!hasEligibleMatches || fuzzyMatches === undefined || fuzzyMatches.length == 0) {
+    $('#activeFuzzyMatches').html(activeWordObject.word + " has no similar words.");
   }
 }
 
@@ -167,18 +203,10 @@ function genDefinitionWordButtons(activeWordObject, wordList){
   }
 }
 
-function isWordEligible(wordInDefinition, completeWordList){
-
-  if (completeWordList.includes(wordInDefinition)){
-    return true;
-  } else {
-    return false;
-  }
-}
-
 function genNewWordObject(objButton, activeWordObject){
 
-  // Clear old definition and synonyms
+  // Clear past active word information
+  $('#activeFuzzyMatches').html("");
   $('#activeDefinition').html("");
   $('#activeSynonyms').html("");
 
@@ -199,16 +227,23 @@ function genNewWordObject(objButton, activeWordObject){
   });
 }
 
+function isWordEligible(wordInDefinition, completeWordList){
+
+  if (completeWordList.includes(wordInDefinition)){
+    return true;
+  } else {
+    return false;
+  }
+}
+
 function gameWon(goalWord){
 
-  // Write final breadcrumb trail to goal word
+  // Write final breadcrumbs trail to goal word
   $("#pastWords").append(goalWord);
 
-  // Show win message
+  // Show win messages
   $("#gameWon").show();
   $("#gameWon").html("Congratulations! You found the goal word in " + window.gameTimer.getTimeValues().toString() + " minutes/seconds!");
-
-  // Update message underneath instructions
   $("#noteMsg").html("Refresh the page to play again.");
 
   // Disable all buttons on the page
