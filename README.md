@@ -1,9 +1,15 @@
 # 2 Dictionary Words
 Find a path from your given word to a new word as fast as you can!
 
-![homepage](https://raw.githubusercontent.com/AndrewDiMola/2-Dictionary-Words/master/homepage.png)
+# Play the game
+![homepage](https://raw.githubusercontent.com/AndrewDiMola/2-Dictionary-Words/master/demos/homepage.png)
 
-![simpledemo](https://raw.githubusercontent.com/AndrewDiMola/2dictionarywords/master/2dictionarywords.gif)
+# Start the game
+![startword](https://raw.githubusercontent.com/AndrewDiMola/2-Dictionary-Words/master/demos/startword.png)
+
+# Win the game
+![goalword](https://raw.githubusercontent.com/AndrewDiMola/2-Dictionary-Words/master/demos/goalword.png)
+![goalpath](https://raw.githubusercontent.com/AndrewDiMola/2-Dictionary-Words/master/demos/goalpath.png)
 
 # Attribution
 * https://www.w3schools.com/w3css/w3css_templates.asp ([W3.CSS is Free](https://www.w3schools.com/w3css/))
