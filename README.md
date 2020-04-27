@@ -10,3 +10,6 @@ Find a path from your given word to a new word as fast as you can!
 * https://github.com/albert-gonzalez/easytimer.js ([MIT](https://github.com/albert-gonzalez/easytimer.js/blob/master/LICENSE.md))
 * https://github.com/Glench/fuzzyset.js ([BSD](https://github.com/Glench/fuzzyset.js#license))
   * Ported from: https://github.com/axiak/fuzzyset ([BSD](https://github.com/axiak/fuzzyset#license))
+
+# License
+GNU General Public License v3.0
